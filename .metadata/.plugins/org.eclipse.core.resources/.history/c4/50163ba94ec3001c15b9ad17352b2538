@@ -1,0 +1,283 @@
+/*
+ * app.c
+ *
+ *  Created on: 22 avr. 2022
+ *      Author: Garnier
+ */
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdint.h>
+#include<assert.h>
+#include<container.h>
+#include<students.h>
+#include<dialog.h>
+#include<defines.h>
+
+#include "app.h"
+
+#define mBitsSet(f,m)		((f)|=(m))
+#define mBitsClr(f,m)		((f)&=(~(m)))
+#define mBitsTgl(f,m)		((f)^=(m))
+#define mBitsMsk(f,m)		((f)& (m))
+#define mIsBitsSet(f,m)		(((f)&(m))==(m))
+#define mIsBitsClr(f,m)		(((~(f))&(m))==(m))
+
+void _AppControlCallBackFunction(t_dialog*pDialog,int controlID,void*pParam);
+
+
+enum e_statusMask{
+	ST_ALL_CLEARED 			= 0x00000000,
+	ST_STUDENT_ADD		= 0x00000001,
+	ST_STUDENT_APLY		= 0x00000002,
+};
+
+struct s_app{
+	uint32_t 		m_uStatus;
+	t_dialog		*m_pDialog;
+	t_container		*m_pStudents;
+	size_t			m_position;
+
+};
+
+t_app*AppNew(void){
+	t_app*pApp =(t_app*)malloc(sizeof(t_app));
+	assert(pApp);
+
+	/************************** APPLICATION CORE *Students Identity*************************/
+
+	*pApp =(t_app){
+		.m_uStatus = ST_ALL_CLEARED,
+		.m_pStudents = ContainerNew((t_ptfV)StudentDel),
+		.m_position =0,
+	};
+
+
+	/************************** GRAPHICAL IHM CONSTRUCTION ****************************/
+
+	pApp->m_pDialog = DialogNew(DIALOG_BOX_WIDTH, DIALOG_BOX_HEIGHT,DIALOG_BOX_TITLE,pApp);
+
+	#include "appControlDefs.c"
+
+	return pApp;
+}
+
+
+t_app*AppDel(t_app*pApp){
+	assert(pApp);
+
+	ContainerDel(pApp->m_pStudents);
+	pApp->m_pDialog = DialogDel(pApp->m_pDialog);
+	free(pApp);
+	return NULL;
+}
+
+
+int AppRun(t_app*pApp){
+	assert(pApp);
+
+
+/*
+
+
+
+	mBitsTgl(pApp->m_uStatus,ST_EDITING_ON);
+
+		if(mIsBitsSet(pApp->m_uStatus,ST_EDITING)){
+			DialogControlSetTitle(pDialog, CTRL_ID_NEW_PUSHBUTTON, "ADD");
+			DialogControlSetTitle(pDialog, CTRL_ID_EDIT_PUSHBUTTON, "CANCEL");
+		}
+
+
+
+
+*/
+//
+//	mBitsSet(pApp->m_uStatus,ST_STUDENT_ADD);
+//	mBitsSet(pApp->m_uStatus,ST_STUDENT_APLY);
+//
+//	StudentGetFirstName(ContainerGetback(pApp->m_pStudents));
+//	StudentGetNickName(ContainerGetback(pApp->m_pStudents));
+//	StudentGetBirthDate(ContainerGetback(pApp->m_pStudents));
+//	StudentGetEmail(ContainerGetback(pApp->m_pStudents));
+//
+//	StudentGetFirstName(ContainerGetfront(pApp->m_pStudents));
+//	StudentGetNickName(ContainerGetfront(pApp->m_pStudents));
+//	StudentGetBirthDate(ContainerGetfront(pApp->m_pStudents));
+//	StudentGetEmail(ContainerGetfront(pApp->m_pStudents));
+
+
+
+
+	return DialogDoModal(pApp->m_pDialog);
+}
+
+
+
+
+void _AppControlCallBackFunction(t_dialog*pDialog,int controlID,void*pParam){
+	t_app*pApp = (t_app*)pParam;
+
+	switch(controlID){
+	case CTRL_ID_NEW_PUSHBUTTON:
+
+		mBitsTgl(pApp->m_uStatus,ST_STUDENT_ADD);
+
+		if(mIsBitsSet(pApp->m_uStatus,ST_STUDENT_ADD)){
+			DialogControlSetTitle(pDialog, CTRL_ID_NEW_PUSHBUTTON, "ADD");
+			DialogControlSetTitle(pDialog, CTRL_ID_EDIT_PUSHBUTTON, "CANCEL");
+
+		}
+		else{
+			DialogControlSetTitle(pDialog, CTRL_ID_NEW_PUSHBUTTON, "NEW");
+			DialogControlSetTitle(pDialog, CTRL_ID_EDIT_PUSHBUTTON, "EDIT");
+			ContainerInsertUnic(pApp->m_pStudents, (t_ptfVV)StudentUnicInsertPredicat, StudentNew(
+										DialogControlGetTitle(pDialog, CTRL_ID_FIRSTNAME_LINEEDIT),
+										DialogControlGetTitle(pDialog, CTRL_ID_NICKNAME_LINEEDIT),
+										DialogControlGetTitle(pDialog, CTRL_ID_DATE_LINEEDIT),
+										DialogControlGetTitle(pDialog, CTRL_ID_EMAIL_LINEEDIT)));
+
+		}
+
+
+
+
+
+		break;
+	case CTRL_ID_EDIT_PUSHBUTTON:
+		DialogControlSetTitle(pDialog, CTRL_ID_NEW_PUSHBUTTON, "APLY");
+		DialogControlSetTitle(pDialog, CTRL_ID_EDIT_PUSHBUTTON, "CANCEL");
+
+		printf("EDIT");
+		break;
+	case CTRL_ID_LOAD_PUSHBUTTON:
+
+		printf("LOAD");
+		break;
+	case CTRL_ID_SAVE_PUSHBUTTON:
+		ContainerParse(pApp->m_pStudents, (t_ptfVV)StudentPrint, NULL);
+		printf("SAVE");
+		break;
+	case CTRL_ID_EXIT_PUSHBUTTON:
+		DialogExit(pDialog);
+		break;
+	case CTRL_ID_DEBUG_LABEL:
+		DialogControlSetTitle(pDialog,CTRL_ID_FIRSTNAME_LINEEDIT, "Garnier");
+		DialogControlSetTitle(pDialog,CTRL_ID_NICKNAME_LINEEDIT, "Andrew");
+		DialogControlSetTitle(pDialog,CTRL_ID_DATE_LINEEDIT, "05/11/1997");
+		DialogControlSetTitle(pDialog,CTRL_ID_EMAIL_LINEEDIT, "painear121@gmail.com");
+		DialogControlSetTitle(pDialog,CTRL_ID_FILENAME_LINEEDIT, DLG_FONT_FILE_NAME_STR);
+		break;
+/****************** NAV BARRE ********************/
+
+	case CTRL_ID_NAVBACK_PUSHBUTTON:
+		DialogControlSetTitle(pDialog,CTRL_ID_FIRSTNAME_LINEEDIT, StudentGetFirstName(ContainerGetback(pApp->m_pStudents)));
+		break;
+//		pApp->m_position =0;
+	case CTRL_ID_NAVFRONT_PUSHBUTTON:
+		DialogControlSetTitle(pDialog,CTRL_ID_FIRSTNAME_LINEEDIT, StudentGetFirstName(ContainerGetfront(pApp->m_pStudents)));
+		break;
+//		pApp->m_position = ContainerCard(pApp->m_pStudents);
+	case CTRL_ID_NAVPREV_PUSHBUTTON:
+		break;
+//		pApp->m_position--;
+
+	case CTRL_ID_NAVNEXT_PUSHBUTTON:
+		break;
+//		pApp->m_position++;
+
+
+	default:
+		break;
+	}
+}
+
+
+
+/************* BRAIN STORMING PROJECT *************/
+
+
+
+
+/*
+ *
+ *  NEW :
+ *
+ *   - Est affiché que si le flag est sur édition off
+ *   - Change le bouton edit en cancel
+ *   - Change l'état du Flag en édition on
+ *   - Vide les champs
+ *
+ *  ADD :
+ *
+ *   - Est affiché que si le laf est sur édtion on
+ *   - Récupère les champs et les insère dans le container
+ *   - change l'état du flag en édition off
+ *
+ *
+ * 	EDIT :
+ *
+ * 	- Est affiché que si le flag est sur édition off
+ * 	- Change le bouton new en aply
+ * 	- change l'état du flag en édition on
+ *
+ *
+ * APLY :
+ *
+ * - Affiche les chaînes de caractères de l'item
+ * - permet de sauvegarder les nouvelles chaînes
+ *
+ *
+ *
+ *
+ *
+ *
+ * Pour les flèches, on crée une variable à incrémenter ou décremenetr en focntion puis un container getat
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

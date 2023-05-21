@@ -1,0 +1,10 @@
+14:07:05 **** Rebuild of configuration Debug for project StudentsApp ****
+Info: Internal Builder is used for build
+gcc "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\h" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\Students" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\App" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\Container" -O0 -g3 -Wall -c -fmessage-length=0 -o "Container\\container.o" "..\\Container\\container.c" 
+gcc "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\h" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\Students" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\App" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\Container" -O0 -g3 -Wall -c -fmessage-length=0 -o "App\\app.o" "..\\App\\app.c" 
+gcc "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\h" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\Students" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\App" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\Container" -O0 -g3 -Wall -c -fmessage-length=0 -o "Students\\students.o" "..\\Students\\students.c" 
+gcc "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\h" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\Students" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\App" "-ID:\\Programmation\\GITHUB\\IHM vFINAL\\StudentsApp\\Container" -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\main.o" "..\\src\\main.c" 
+gcc "-LC:\\MinGW\\bin" -o StudentsApp.exe "App\\app.o" "Container\\container.o" "Students\\students.o" "src\\main.o" -llibDialogSharedLib 
+
+14:07:07 Build Finished. 0 errors, 0 warnings. (took 2s.240ms)
+
